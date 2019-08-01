@@ -55,7 +55,7 @@ public class EventAuditItemReader implements ItemReader<EventAudit> {
                 eventAudits = eventAuditRepository.findAll();
             } else {
                 eventAudits = eventAuditRepository.findAllByTimeStamp(applicationConfig.getLastExecutedJobTimeStamp());
-                throw new Exception();
+               
             }
  		 }catch(Exception e){ 			
  			 throw new IvansBatchItemException("Error in EventAuditItemReader",e);
