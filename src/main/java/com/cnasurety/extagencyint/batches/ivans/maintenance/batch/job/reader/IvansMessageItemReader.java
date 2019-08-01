@@ -1,7 +1,5 @@
 package com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.reader;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,21 +13,27 @@ import org.springframework.batch.item.support.IteratorItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.config.ApplicationConfig;
+import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.exception.IvansBatchItemException;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.model.IvansMessage;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.model.IvansMessageAttachment;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.repository.EventAuditRepository;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.repository.IvansMessageAttachmentRepository;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.repository.IvansMessageRepository;
+import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.util.ReportingUtil;
+
+
+@Service
+public class IvansMessageItemReader implements ItemReader<IvansMessage>{
 
 
 
-public class IvansMessageItemReader extends BaseItemReader implements ItemReader<IvansMessage>{
-
-
-
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 	
-	    
+
+	@Autowired
+	ApplicationConfig applicationConfig;
+	
 	    @Autowired
 	    IvansMessageRepository ivansMessageRepository;
 	    
@@ -41,7 +45,7 @@ public class IvansMessageItemReader extends BaseItemReader implements ItemReader
 		@Override
 		public IvansMessage read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
 			if (delegate == null) {
-	            delegate = new IteratorItemReader<>(readTable(getLastExecutedJobTimeStamp()));
+	            delegate = new IteratorItemReader<>(readTable());
 	        }
 	        return  delegate.read();
 		}
@@ -49,20 +53,25 @@ public class IvansMessageItemReader extends BaseItemReader implements ItemReader
 		@Autowired
 	    EventAuditRepository eventAuditRepository;
 	 	
-	 	public List<IvansMessage> readTable(Timestamp lastExecutedTimeStamp){
+	 	public List<IvansMessage> readTable() throws IvansBatchItemException{
 	 		 
 	 		 List<IvansMessage> ivansMessages = null;
 	         List<IvansMessageAttachment> ivansMessageAttachments = null;
-	         if (Objects.isNull(lastExecutedTimeStamp)) {
+	         try {
+	         if (Objects.isNull(applicationConfig.getLastExecutedJobTimeStamp())) {
 	         	ivansMessages = ivansMessageRepository.findAll();
 	         
 	         } else {
-	         	ivansMessages = ivansMessageRepository.findAllByTimeStamp(lastExecutedTimeStamp);
+	         	ivansMessages = ivansMessageRepository.findAllByTimeStamp(applicationConfig.getLastExecutedJobTimeStamp());
 	         }
 	         for (IvansMessage ivansMessage : ivansMessages) {
 	          	ivansMessageAttachments = ivansMessageAttachmentRepository.findByIvansMessageKey(ivansMessage.getIvansMessageKey());
 	          	ivansMessage.setIvansMessageAttaments(ivansMessageAttachments);
 	         }
+	         }catch(Exception e){
+	 			
+	 			 throw new IvansBatchItemException("Error in IvansMessageItemReader",e);
+	 		 }
 	         return ivansMessages;
 	 	}
  	

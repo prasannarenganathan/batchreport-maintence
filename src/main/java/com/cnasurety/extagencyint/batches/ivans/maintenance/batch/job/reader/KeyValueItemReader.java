@@ -1,7 +1,5 @@
 package com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.reader;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -16,24 +14,30 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.config.ApplicationConfig;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.dto.KeyValueDTO;
+import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.exception.IvansBatchItemException;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.model.KeyValue;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.repository.DocumentRepository;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.repository.KeyValueRepository;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.repository.NotificationRepository;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.repository.PackageRepository;
+import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.util.ReportingUtil;
 
 
-
-public class KeyValueItemReader extends BaseItemReader implements ItemReader<KeyValue>{
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+@Service
+public class KeyValueItemReader implements ItemReader<KeyValue>{
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
+	
+	@Autowired
+	ApplicationConfig applicationConfig;
 	
 	private ItemReader<KeyValue> delegate;
 	@SuppressWarnings("unchecked")
 	@Override
 	public KeyValue read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
 		if (delegate == null) {
-            delegate = new IteratorItemReader<>(readTable(getLastExecutedJobTimeStamp()));
+            delegate = new IteratorItemReader<>(readTable());
         }
         return  delegate.read();
 	}
@@ -41,33 +45,36 @@ public class KeyValueItemReader extends BaseItemReader implements ItemReader<Key
 	@Autowired
 	KeyValueRepository keyValueRepository;
  	
- 	public List<KeyValue> readTable(Timestamp lastExecutedTimeStamp){
+ 	public List<KeyValue> readTable() throws IvansBatchItemException{
  		 List<KeyValue> keyValues = null;
- 		 List<String[]> data = new ArrayList<String[]>();
- 		 if (Objects.isNull(lastExecutedTimeStamp)) {
+ 		 try {
+ 		 if (Objects.isNull(applicationConfig.getLastExecutedJobTimeStamp())) {
  			keyValues = keyValueRepository.findAll();
             } else {
-            	keyValues = keyValueRepository.findAllByTimeStamp(lastExecutedTimeStamp);
+            	keyValues = keyValueRepository.findAllByTimeStamp(applicationConfig.getLastExecutedJobTimeStamp());
             }
  		keyValues.forEach(keyValue -> {
             KeyValueDTO keyValueDTO = new KeyValueDTO();
             BeanUtils.copyProperties(keyValue, keyValueDTO);
-            /*
-             * if (keyValue.getKeyValuePairTypeCode().equals("NOTIFICATION_TBL")) {
-             * keyValue.setForiegnKeyId(
-             * notificationRepository.findNotificationIdByKeyValuePairId(keyValue.
-             * getKeyValuePairId())); } else if
-             * (keyValue.getKeyValuePairTypeCode().equals("PACKAGE_TBL")) {
-             * keyValue.setForiegnKeyId(
-             * packageRepository.findPackageIdByKeyValuePairId(keyValue.getKeyValuePairId())
-             * ); } else { // (keyValue.getKeyValuePairTypeCode().equals("DOCUMENT_TBL")) {
-             * keyValue.setForiegnKeyId(
-             * documentRepository.findDocumentIdByKeyValuePairId(keyValue.getKeyValuePairId(
-             * ))); }
-             */
+            
+              if (keyValue.getKeyValuePairTypeCode().equals("NOTIFICATION_TBL")) {
+              keyValue.setForiegnKeyId(
+              notificationRepository.findNotificationIdByKeyValuePairId(keyValue.
+              getKeyValuePairId())); } else if
+              (keyValue.getKeyValuePairTypeCode().equals("PACKAGE_TBL")) {
+              keyValue.setForiegnKeyId(
+              packageRepository.findPackageIdByKeyValuePairId(keyValue.getKeyValuePairId())
+              ); } else { // (keyValue.getKeyValuePairTypeCode().equals("DOCUMENT_TBL")) {
+              keyValue.setForiegnKeyId(
+              documentRepository.findDocumentIdByKeyValuePairId(keyValue.getKeyValuePairId(
+              ))); }
+             
 
         });
- 		
+ 		}catch(Exception e){
+			
+			 throw new IvansBatchItemException("Error in KeyValueItemReader",e);
+		 }
  		return keyValues;
  	}
 	

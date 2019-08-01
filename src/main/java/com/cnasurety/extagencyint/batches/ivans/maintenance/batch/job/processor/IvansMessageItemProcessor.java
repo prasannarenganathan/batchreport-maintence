@@ -3,6 +3,7 @@ package com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.processor
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Service;
 
+import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.exception.IvansBatchItemException;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.model.IvansMessage;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.model.IvansMessageAttachment;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.util.ReportingUtil;
@@ -10,11 +11,12 @@ import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.util.Reporting
 public class IvansMessageItemProcessor implements ItemProcessor<IvansMessage, IvansMessage> {
 
 	@Override
-	public IvansMessage process(IvansMessage ivansMessage) throws Exception {
+	public IvansMessage process(IvansMessage ivansMessage) throws IvansBatchItemException {
 		 
 		
          	
          	String[] ivansMessageData = null; 
+         	try {
          	if(!ivansMessage.getIvansMessageAttaments().isEmpty()) {
 	            	for(IvansMessageAttachment ivansMessageAttachment:ivansMessage.getIvansMessageAttaments()) {
 	            		ivansMessageData =  new String[] {
@@ -65,7 +67,9 @@ public class IvansMessageItemProcessor implements ItemProcessor<IvansMessage, Iv
       
         
          	ivansMessage.setEntitydataString(ivansMessageData);
-       
+	 }catch(Exception exception){ 			
+			 throw new IvansBatchItemException("Error in IvansMessageItemProcessor",exception);
+		 }
 		return ivansMessage;
 	}
 }

@@ -6,6 +6,7 @@ import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.exception.IvansBatchItemException;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.model.DocumentEntity;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.model.Notification;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.model.NotificationAgencyExtension;
@@ -31,12 +32,12 @@ public class NotificationItemProcessor implements ItemProcessor<Notification, No
 
 
 @Override
-public Notification process(Notification notification) throws Exception {
+public Notification process(Notification notification) throws IvansBatchItemException {
 NotificationAgencyExtension notificationAgencyExtension = null;
        List<PackageEntity> packages = null;
        List<DocumentEntity> documents = null;
        String[] notificationData = null;
-
+try {
        notificationAgencyExtension =   notificationAgencyExtensionRepository.findByNotificationKey(notification.getNotificationKey());
        if(notificationAgencyExtension!=null) {
        
@@ -158,7 +159,9 @@ NotificationAgencyExtension notificationAgencyExtension = null;
            };
            notification.setEntitydataString(notificationData);
        }
-   
+}catch(Exception exception){ 			
+	 throw new IvansBatchItemException("Error in NotificationItemProcessor",exception);
+}
         
 return notification;
 }

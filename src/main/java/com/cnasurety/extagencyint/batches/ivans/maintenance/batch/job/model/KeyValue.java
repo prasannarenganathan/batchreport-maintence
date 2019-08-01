@@ -30,7 +30,7 @@ public class KeyValue extends EntityDataReader{
     @Column(name = "\"KEY_VALUE_PAIR_TYPE_CODE\"")
     private String keyValuePairTypeCode;
 
-  //  private String foriegnKeyId;
+    private String foriegnKeyId;
     
 
 
@@ -82,12 +82,12 @@ public class KeyValue extends EntityDataReader{
         this.keyValuePairTypeCode = keyValuePairTypeCode;
     }
 
-    /*
-     * public String getForiegnKeyId() { return foriegnKeyId; }
-     * 
-     * public void setForiegnKeyId(String foriegnKeyId) { this.foriegnKeyId =
-     * foriegnKeyId; }
-     */
+    
+      public String getForiegnKeyId() { return foriegnKeyId; }
+      
+      public void setForiegnKeyId(String foriegnKeyId) { this.foriegnKeyId =
+      foriegnKeyId; }
+     
     
     
 

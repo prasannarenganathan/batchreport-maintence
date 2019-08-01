@@ -7,6 +7,7 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.exception.IvansBatchItemException;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.model.Notification;
 
 
@@ -19,12 +20,15 @@ public class NotificationItemWriter implements ItemWriter<Notification> {
 	private static final String NOTIFICATION_TABLE = "NOTIFICATIONTABLE_";
 	
 	@Override
-	public void write(List<? extends Notification> notifications) throws Exception {
+	public void write(List<? extends Notification> notifications) throws IvansBatchItemException {
 		 List<String[]> data = new ArrayList<String[]>();
- 		 
+ 		 try {
  		for (Notification e : notifications) {
             data.add(e.getEntityDataString());
         }
  		writeProcessor.writeFile(data, NOTIFICATION_TABLE);
+	}catch(Exception exception){ 			
+		 throw new IvansBatchItemException("Error in NotificationItemWriter: ",exception);
+	}
 	}
 }

@@ -7,6 +7,7 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.exception.IvansBatchItemException;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.model.KeyValue;
 
 @Service
@@ -18,14 +19,16 @@ public class KeyValueItemWriter implements ItemWriter<KeyValue> {
 	private static final String EVENT_AUDIT_TABLE = "EVENTAUDITTABLE_";
 	
 	@Override
-	public void write(List<? extends KeyValue> keyValues) throws Exception {
+	public void write(List<? extends KeyValue> keyValues) throws IvansBatchItemException {
 		 List<String[]> data = new ArrayList<String[]>();
- 		 
+ 		 try {
  		for (KeyValue e : keyValues) {
             data.add(e.getEntityDataString());
         }
  		writeProcessor.writeFile(data, EVENT_AUDIT_TABLE);
- 		
+	}catch(Exception exception){ 			
+		 throw new IvansBatchItemException("Error in KeyValueItemWriter",exception);
+	}
 		
 	}
 

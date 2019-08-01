@@ -1,7 +1,5 @@
 package com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.reader;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -13,21 +11,28 @@ import org.springframework.batch.item.ParseException;
 import org.springframework.batch.item.UnexpectedInputException;
 import org.springframework.batch.item.support.IteratorItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.config.ApplicationConfig;
+import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.exception.IvansBatchItemException;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.model.Notification;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.repository.DocumentRepository;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.repository.NotificationAgencyExtensionRepository;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.repository.NotificationRepository;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.repository.PackageRepository;
+import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.util.ReportingUtil;
 
 
 
+@Service
+public class NotificationItemReader implements ItemReader<Notification>{
 
-public class NotificationItemReader extends BaseItemReader implements ItemReader<Notification>{
-
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 	@Autowired
     NotificationRepository notificationRepository;
+	
+	@Autowired
+	ApplicationConfig applicationConfig;
 	
 	 @Autowired
 	    NotificationAgencyExtensionRepository notificationAgencyExtensionRepository;
@@ -44,27 +49,25 @@ public class NotificationItemReader extends BaseItemReader implements ItemReader
 		@Override
 		public Notification read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
 			if (delegate == null) {
-	            delegate = new IteratorItemReader<>(readTable(getLastExecutedJobTimeStamp()));
+	            delegate = new IteratorItemReader<>(readTable());
 	        }
 	        return  delegate.read();
 		}
 		
-	 	public List<Notification> readTable(Timestamp lastExecutedTimeStamp){
-	 		 
-	 		 List<String[]> data = new ArrayList<String[]>();
+	 	public List<Notification> readTable() throws IvansBatchItemException{
 	 		List<Notification> notifications = null;
 
-	        
-	 		if (Objects.isNull(lastExecutedTimeStamp)) {
+	        try {
+	 		if (Objects.isNull(applicationConfig.getLastExecutedJobTimeStamp())) {
 	        	notifications = notificationRepository.findAll();
 	        } else {
-	        	notifications = notificationRepository.findAllByTimeStamp(lastExecutedTimeStamp);
+	        	notifications = notificationRepository.findAllByTimeStamp(applicationConfig.getLastExecutedJobTimeStamp());
 	        }
-	         	
+	        }catch(Exception e){
+				
+				 throw new IvansBatchItemException("Error in NotificationItemReader",e);
+			 }
 	        
-	        
-	        logger.info("Number of Records Exported: {}", data.size());
-	 		
 	 		return notifications;
 	 	}
 	
