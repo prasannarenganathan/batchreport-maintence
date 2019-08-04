@@ -5,6 +5,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
+import org.springframework.batch.item.file.transform.DelimitedLineAggregator;
+import org.springframework.batch.item.file.transform.PassThroughFieldExtractor;
+
 public class ReportingUtil {
 
 	
@@ -17,7 +20,7 @@ public class ReportingUtil {
 	}
 	
 	public static String getCurrentDate() {
-		DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+		DateFormat df = new SimpleDateFormat(BatchConstants.FILE_DATE_FORMAT);
 		return df.format(new Date());
 	}
 	

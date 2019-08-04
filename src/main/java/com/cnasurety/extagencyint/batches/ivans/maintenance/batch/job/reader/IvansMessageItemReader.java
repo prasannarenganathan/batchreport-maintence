@@ -53,6 +53,10 @@ public class IvansMessageItemReader implements ItemReader<IvansMessage>{
 		@Autowired
 	    EventAuditRepository eventAuditRepository;
 	 	
+		/*
+	 	 * Read table will have list of item as the records are retrived based on the last execution job time
+	 	 * So we are collecting all the records which are created after the last execution time
+	 	 */
 	 	public List<IvansMessage> readTable() throws IvansBatchItemException{
 	 		 
 	 		 List<IvansMessage> ivansMessages = null;

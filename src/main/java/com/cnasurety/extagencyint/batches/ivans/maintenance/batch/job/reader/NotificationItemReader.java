@@ -54,6 +54,10 @@ public class NotificationItemReader implements ItemReader<Notification>{
 	        return  delegate.read();
 		}
 		
+		/*
+	 	 * Read table will have list of item as the records are retrived based on the last execution job time
+	 	 * So we are collecting all the records which are created after the last execution time
+	 	 */
 	 	public List<Notification> readTable() throws IvansBatchItemException{
 	 		List<Notification> notifications = null;
 

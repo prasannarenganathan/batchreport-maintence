@@ -6,7 +6,9 @@ import java.sql.Timestamp;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+
 
 @Component
 @ConfigurationProperties(prefix="workflow.report")
@@ -16,6 +18,8 @@ public class ApplicationConfig {
     
     Timestamp lastExecutedJobTimeStamp;
 
+    String fileName;
+    
     public String getFilePath() {
         return filePath;
     }
@@ -31,6 +35,15 @@ public class ApplicationConfig {
 	public void setLastExecutedJobTimeStamp(Timestamp lastExecutedJobTimeStamp) {
 		this.lastExecutedJobTimeStamp = lastExecutedJobTimeStamp;
 	}
-    
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+	
+	
     
 }

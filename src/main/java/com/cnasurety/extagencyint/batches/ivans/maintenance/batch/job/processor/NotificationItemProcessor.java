@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.exception.IvansBatchItemException;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.model.DocumentEntity;
@@ -14,6 +15,7 @@ import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.model.Pack
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.repository.DocumentRepository;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.repository.NotificationAgencyExtensionRepository;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.repository.PackageRepository;
+import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.util.BatchConstants;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.util.ReportingUtil;
 
 
@@ -96,7 +98,7 @@ try {
                              ReportingUtil.convertToString(documentEntity.getLastModifiedDate())
                              
                              };    
-                           notification.setEntitydataString(notificationData);
+                           notification.setEntityString(StringUtils.arrayToDelimitedString(notificationData, BatchConstants.ITEM_DELIMINATOR));
                        }
                    }else {
                        notificationData = new String[]{
@@ -121,7 +123,7 @@ try {
                                  "","","","","","","","" 
                                  
                         };
-                       notification.setEntitydataString(notificationData);
+                       notification.setEntityString(StringUtils.arrayToDelimitedString(notificationData, BatchConstants.ITEM_DELIMINATOR));
                    }
                }
            }else {
@@ -142,7 +144,7 @@ try {
                          "","","","","","","","",
                          "","","","","","","","",""
                };
-               notification.setEntitydataString(notificationData);
+               notification.setEntityString(StringUtils.arrayToDelimitedString(notificationData, BatchConstants.ITEM_DELIMINATOR));
            }
        }else {
            notificationData =  new String[]{
@@ -157,7 +159,7 @@ try {
                      "","","","","","","","",
                      "","","","","","","","",""
            };
-           notification.setEntitydataString(notificationData);
+           notification.setEntityString(StringUtils.arrayToDelimitedString(notificationData, BatchConstants.ITEM_DELIMINATOR));
        }
 }catch(Exception exception){ 			
 	 throw new IvansBatchItemException("Error in NotificationItemProcessor",exception);

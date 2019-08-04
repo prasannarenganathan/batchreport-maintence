@@ -46,7 +46,10 @@ public class EventAuditItemReader implements ItemReader<EventAudit> {
 	
 	@Autowired
     EventAuditRepository eventAuditRepository;
- 	
+ 	/*
+ 	 * Read table will have list of item as the records are retrived based on the last execution job time
+ 	 * So we are collecting all the records which are created after the last execution time
+ 	 */
  	public List<EventAudit> readTable() throws IvansBatchItemException{
  		 List<EventAudit> eventAudits = null;
  		 try {
@@ -60,7 +63,11 @@ public class EventAuditItemReader implements ItemReader<EventAudit> {
  		 }catch(Exception e){ 			
  			 throw new IvansBatchItemException("Error in EventAuditItemReader",e);
  		 }
- 		 
+ 		EventAudit evnt = new EventAudit();
+ 		evnt.setEventAuditKey("72351234");
+ 		evnt.setNotificationEventToStatus("STATUS");
+ 		evnt.setPackageEventFromStatus("packageEventFromStatus");
+ 		eventAudits.add(evnt);
  		 return eventAudits;
  	}
 	

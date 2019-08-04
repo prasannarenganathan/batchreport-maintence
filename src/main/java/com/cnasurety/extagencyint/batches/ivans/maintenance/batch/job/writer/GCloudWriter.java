@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.config.ApplicationConfig;
@@ -17,11 +18,8 @@ import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.util.Reporting
 
 
 @Service
-public class WriteProcessor {
+public class GCloudWriter {
 
-	private static final String FILE_TYPE = ".csv";
-	
-	private static final char SEPARATOR = '|';
 	
     /*
      * @Autowired CloudStorageHelper gcloudStorage;
@@ -30,18 +28,10 @@ public class WriteProcessor {
 	@Autowired
     ApplicationConfig applicationConfig;
 	
-	public String writeFile(List<String[]> data, String tableName) throws IOException {
+	public String writeFile(FileSystemResource resource) throws IOException {
 		
 		 String storageSuccesslink = null;
-		 File file = new File(applicationConfig.getFilePath()+tableName+ReportingUtil.getCurrentDate()+FILE_TYPE);
-		 FileWriter outputfile = new FileWriter(file);
-		 
-		 CSVWriter writer = new CSVWriter(outputfile, SEPARATOR,
-                 CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
-		 writer.writeAll(data);
-         writer.close();
-         
-         final InputStream targetStream = new DataInputStream(new FileInputStream(file));
+         final InputStream targetStream = new DataInputStream(new FileInputStream(resource.getFile()));
         /*
          * storageSuccesslink =
          * gcloudStorage.uploadFile(tableName,FILE_TYPE,targetStream, "ivans_bucket");

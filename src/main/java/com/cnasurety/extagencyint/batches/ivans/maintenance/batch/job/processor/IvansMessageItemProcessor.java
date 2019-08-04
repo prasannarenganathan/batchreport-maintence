@@ -2,10 +2,12 @@ package com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.processor
 
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.exception.IvansBatchItemException;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.model.IvansMessage;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.model.IvansMessageAttachment;
+import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.util.BatchConstants;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.util.ReportingUtil;
 @Service
 public class IvansMessageItemProcessor implements ItemProcessor<IvansMessage, IvansMessage> {
@@ -65,8 +67,8 @@ public class IvansMessageItemProcessor implements ItemProcessor<IvansMessage, Iv
  		 
  		
       
-        
-         	ivansMessage.setEntitydataString(ivansMessageData);
+         	ivansMessage.setEntityString(StringUtils.arrayToDelimitedString(ivansMessageData, BatchConstants.ITEM_DELIMINATOR));
+         	
 	 }catch(Exception exception){ 			
 			 throw new IvansBatchItemException("Error in IvansMessageItemProcessor",exception);
 		 }

@@ -5,16 +5,9 @@ import java.util.List;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.model.IvansMessageAttachment;
 
 public class EntityDataReader {
+	
+	String entityString;
 
-	String[] entityDataString;
-
-	public String[] getEntityDataString() {
-		return entityDataString;
-	}
-
-	public void setEntitydataString(String[] entityDataString) {
-		this.entityDataString = entityDataString;
-	}
 	
 	private List<IvansMessageAttachment> ivansMessageAttaments;
 	
@@ -35,6 +28,17 @@ public class EntityDataReader {
 
 	public void setNotificationAgencyExtension(NotificationAgencyExtension notificationAgencyExtension) {
 		this.notificationAgencyExtension = notificationAgencyExtension;
-	}	
+	}
+
+	public String getEntityString() {
+		return entityString;
+	}
+
+	public void setEntityString(String entityString) {
+		this.entityString = entityString;
+	}
+
+	
+	
 	
 }

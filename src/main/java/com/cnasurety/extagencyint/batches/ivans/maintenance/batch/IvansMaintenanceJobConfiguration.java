@@ -11,12 +11,16 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.item.file.FlatFileItemWriter;
+import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
+import org.springframework.batch.item.file.transform.DelimitedLineAggregator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.config.ApplicationConfig;
-import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.exception.IvansBatchItemException;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.model.EventAudit;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.model.IvansMessage;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.model.KeyValue;
@@ -34,6 +38,8 @@ import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.writer.Eve
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.writer.IvansMessageItemWriter;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.writer.KeyValueItemWriter;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.writer.NotificationItemWriter;
+import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.util.BatchConstants;
+import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.util.ReportingUtil;
 
 @Configuration
 @EnableBatchProcessing
@@ -127,6 +133,21 @@ public class IvansMaintenanceJobConfiguration {
                 .build();
     }
      
+   /* @Bean
+    public FlatFileItemWriter<EventAudit> writer(){
+     FlatFileItemWriter<EventAudit> writer = new FlatFileItemWriter<EventAudit>();
+     writer.setResource(new FileSystemResource(applicationConfig.getFilePath()+"EVENT_AUDIT_"+ReportingUtil.getCurrentDate()+BatchConstants.FILE_TYPE));
+
+
+     writer.setLineAggregator(new DelimitedLineAggregator<EventAudit>() {{
+      setDelimiter("|");
+      setFieldExtractor(new BeanWrapperFieldExtractor<EventAudit>() {{
+       setNames(new String[] { "entityString" });
+      }});
+     }});
+     
+     return writer;
+    }*/
   
 
     @Bean

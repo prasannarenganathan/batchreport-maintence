@@ -44,7 +44,10 @@ public class KeyValueItemReader implements ItemReader<KeyValue>{
 	
 	@Autowired
 	KeyValueRepository keyValueRepository;
- 	
+	/*
+ 	 * Read table will have list of item as the records are retrived based on the last execution job time
+ 	 * So we are collecting all the records which are created after the last execution time
+ 	 */
  	public List<KeyValue> readTable() throws IvansBatchItemException{
  		 List<KeyValue> keyValues = null;
  		 try {
@@ -57,6 +60,9 @@ public class KeyValueItemReader implements ItemReader<KeyValue>{
             KeyValueDTO keyValueDTO = new KeyValueDTO();
             BeanUtils.copyProperties(keyValue, keyValueDTO);
             
+            /*
+             * The keyva is no 
+             */
               if (keyValue.getKeyValuePairTypeCode().equals("NOTIFICATION_TBL")) {
               keyValue.setForiegnKeyId(
               notificationRepository.findNotificationIdByKeyValuePairId(keyValue.
