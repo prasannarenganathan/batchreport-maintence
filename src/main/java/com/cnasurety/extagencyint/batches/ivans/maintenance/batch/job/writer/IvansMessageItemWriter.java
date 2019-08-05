@@ -1,9 +1,7 @@
 package com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.writer;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
 import org.springframework.batch.item.file.transform.DelimitedLineAggregator;
@@ -27,7 +25,11 @@ public class IvansMessageItemWriter extends FlatFileItemWriter<IvansMessage> {
     ApplicationConfig applicationConfig;
 	
     FileSystemResource fileSystemResource;
-    
+
+    /*
+     * Created custom Flat Item Writer to push the written file into the cloud
+     * Hence, initializing the resource and aggregator of FileItemWriter 
+     */
 	 @Autowired
 	 IvansMessageItemWriter(ApplicationConfig applicationConfig){
 
@@ -43,7 +45,9 @@ public class IvansMessageItemWriter extends FlatFileItemWriter<IvansMessage> {
 		     }});
 	 }
 	 
-	 
+    /*
+     * Over riding write method to implement the gcloud file writer.
+     */
 	public void write(List<? extends IvansMessage> IvansMessages) throws IvansBatchItemException {
 	      
 	  try {

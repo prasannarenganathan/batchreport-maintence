@@ -25,6 +25,10 @@ public class KeyValueItemWriter extends FlatFileItemWriter<KeyValue> {
 	
     FileSystemResource fileSystemResource;
     
+    /*
+     * Created custom Flat Item Writer to push the written file into the cloud
+     * Hence, initializing the resource and aggregator of FileItemWriter 
+     */
 	 @Autowired
 	 KeyValueItemWriter(ApplicationConfig applicationConfig){
 
@@ -40,7 +44,9 @@ public class KeyValueItemWriter extends FlatFileItemWriter<KeyValue> {
 		     }});
 	 }
 	 
-	 
+	/*
+	 * Over riding write method to implement the gcloud file writer.
+	 */	
 	public void write(List<? extends KeyValue> KeyValues) throws IvansBatchItemException {
 	      
 	  try {

@@ -3,8 +3,6 @@ package com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.reader;
 import java.util.List;
 import java.util.Objects;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.NonTransientResourceException;
 import org.springframework.batch.item.ParseException;
@@ -22,18 +20,17 @@ import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.repository
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.repository.KeyValueRepository;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.repository.NotificationRepository;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.repository.PackageRepository;
-import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.util.ReportingUtil;
 
 
 @Service
 public class KeyValueItemReader implements ItemReader<KeyValue>{
-	private final Logger log = LoggerFactory.getLogger(this.getClass());
+	
 	
 	@Autowired
 	ApplicationConfig applicationConfig;
 	
 	private ItemReader<KeyValue> delegate;
-	@SuppressWarnings("unchecked")
+	
 	@Override
 	public KeyValue read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
 		if (delegate == null) {

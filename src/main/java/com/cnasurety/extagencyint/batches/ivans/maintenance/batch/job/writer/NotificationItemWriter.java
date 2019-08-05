@@ -26,7 +26,10 @@ public class NotificationItemWriter extends FlatFileItemWriter<Notification> {
 	
     FileSystemResource fileSystemResource;
 	 
-	
+    /*
+     * Created custom Flat Item Writer to push the written file into the cloud
+     * Hence, initializing the resource and aggregator of FileItemWriter 
+     */
 	 @Autowired
 	 NotificationItemWriter(ApplicationConfig applicationConfig){
 
@@ -42,7 +45,9 @@ public class NotificationItemWriter extends FlatFileItemWriter<Notification> {
 		     }});
 	 }
 	 
-	 
+	/*
+	 * Over riding write method to implement the gcloud file writer.
+	 */ 
 	public void write(List<? extends Notification> Notifications) throws IvansBatchItemException {
 	      
 	  try {

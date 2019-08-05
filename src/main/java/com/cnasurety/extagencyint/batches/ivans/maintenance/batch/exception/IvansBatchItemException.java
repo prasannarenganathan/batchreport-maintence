@@ -4,7 +4,12 @@ public class IvansBatchItemException extends Exception{
 
 	
 	 
-	 public IvansBatchItemException(String message, Throwable cause) {
+	 /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public IvansBatchItemException(String message, Throwable cause) {
 	        super(message, cause);
 	        
 	    }

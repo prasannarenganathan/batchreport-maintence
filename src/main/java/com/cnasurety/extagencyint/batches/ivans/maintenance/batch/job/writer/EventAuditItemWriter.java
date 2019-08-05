@@ -2,12 +2,10 @@ package com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.writer;
 
 import java.util.List;
 
-import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
 import org.springframework.batch.item.file.transform.DelimitedLineAggregator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +26,10 @@ public class EventAuditItemWriter extends FlatFileItemWriter<EventAudit> {
 	
     FileSystemResource fileSystemResource;
 	
+    /*
+     * Created custom Flat Item Writer to push the written file into the cloud
+     * Hence, initializing the resource and aggregator of FileItemWriter 
+     */
 	 @Autowired
 	 EventAuditItemWriter(ApplicationConfig applicationConfig){
 		 
@@ -43,7 +45,9 @@ public class EventAuditItemWriter extends FlatFileItemWriter<EventAudit> {
 		     }});
 	 }
 	 
-	 
+	 /*
+	  * Over riding write method to implement the gcloud file writer.
+	  */	
 	public void write(List<? extends EventAudit> eventAudits) throws IvansBatchItemException {
 	      
 	  try {
