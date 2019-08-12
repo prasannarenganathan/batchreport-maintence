@@ -4,6 +4,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 public class ReportingUtil {
 
 	
@@ -15,9 +20,10 @@ public class ReportingUtil {
 		}
 	}
 	
-	public static String getCurrentDate() {
-		DateFormat df = new SimpleDateFormat(BatchConstants.FILE_DATE_FORMAT);
-		return df.format(new Date());
+	public static String getFormattedDate() {
+		 DateTimeFormatter dtf = DateTimeFormat.forPattern(BatchConstants.DATE_FORMAT);
+		    DateTime dt = DateTime.now(DateTimeZone.UTC);
+		    return dt.toString(dtf);
 	}
 	
 }

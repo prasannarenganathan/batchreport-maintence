@@ -125,7 +125,7 @@ public class IvansMaintenanceJobConfiguration {
 
     @Bean
     public Job exportKeyValueJob(JobCompletionNotificationListener listener, Step keyValueStep) {
-
+    	
     	 applicationConfig.setLastExecutedJobTimeStamp(batchJobExecutionRepository.findLastExecutedTimeStamp());
 
         return jobBuilderFactory.get("exportKeyValueJob").incrementer(new RunIdIncrementer()).listener(listener)
@@ -142,7 +142,7 @@ public class IvansMaintenanceJobConfiguration {
 
     @Bean
     public Job exportIvansMessageJob(JobCompletionNotificationListener listener, Step ivansMessageStep) {
-
+    
 
     	 applicationConfig.setLastExecutedJobTimeStamp(batchJobExecutionRepository.findLastExecutedTimeStamp());
 
@@ -152,6 +152,7 @@ public class IvansMaintenanceJobConfiguration {
 
     @Bean
     public Step ivansMessageStep() {
+    	
         return stepBuilderFactory.get("ivansMessageStep").<IvansMessage, IvansMessage>chunk(10)
                 .reader(ivansMessageItemReader).processor(ivansMessageItemProcessor).writer(ivansMessageItemWriter)
                 .build();
@@ -161,7 +162,6 @@ public class IvansMaintenanceJobConfiguration {
 
     @Bean
     public Job exportNotificationJob(JobCompletionNotificationListener listener, Step notificationStep) {
-
        
     	 applicationConfig.setLastExecutedJobTimeStamp(batchJobExecutionRepository.findLastExecutedTimeStamp());
 

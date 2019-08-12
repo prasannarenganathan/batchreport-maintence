@@ -1,5 +1,6 @@
 package com.cnasurety.extagencyint.batches.ivans.maintenance.batch.job.writer;
 
+import java.io.File;
 import java.util.List;
 
 import org.springframework.batch.item.file.FlatFileItemWriter;
@@ -8,6 +9,7 @@ import org.springframework.batch.item.file.transform.DelimitedLineAggregator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.config.ApplicationConfig;
 import com.cnasurety.extagencyint.batches.ivans.maintenance.batch.exception.IvansBatchItemException;
@@ -34,7 +36,7 @@ public class EventAuditItemWriter extends FlatFileItemWriter<EventAudit> {
 	 EventAuditItemWriter(ApplicationConfig applicationConfig){
 		 
 		 this.applicationConfig=applicationConfig;
-		 applicationConfig.setFileName(applicationConfig.getFilePath()+BatchConstants.EVENT_AUDIT_TABLE+ReportingUtil.getCurrentDate()+BatchConstants.FILE_TYPE);
+		 applicationConfig.setFileName(applicationConfig.getFilePath()+BatchConstants.EVENT_AUDIT_TABLE+ReportingUtil.getFormattedDate()+BatchConstants.FILE_TYPE);
 		 this.fileSystemResource= new FileSystemResource(applicationConfig.getFileName()); 
 		 
 		 super.setResource(this.fileSystemResource);
@@ -52,8 +54,11 @@ public class EventAuditItemWriter extends FlatFileItemWriter<EventAudit> {
 	      
 	  try {
 		super.write(eventAudits);
-		//TODO: writing file to cloud logic has to be written here. Write Processor has implementation of cloud logic
-		cloudWriter.writeFile(this.fileSystemResource);
+		String successLink=cloudWriter.writeFile( this.fileSystemResource);
+		if(!StringUtils.isEmpty(successLink)) {
+			File file = this.fileSystemResource.getFile();
+			file.delete();
+		}
 	} catch(Exception exception){ 			
 		 throw new IvansBatchItemException("Error in EventAuditItemWriter",exception);
 	}
